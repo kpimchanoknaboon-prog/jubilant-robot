@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 CS Work Agent Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #7c3aed 50%, #d946ef 100%);
+            color: #fff;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ec4899, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: #fbbf24;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* LINE OA Sidebar */
+        .lineoa-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        .lineoa-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lineoa-item:hover {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.2);
+        }
+
+        .lineoa-item.active {
+            border-color: #ec4899;
+            background: rgba(236, 72, 153, 0.3);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .lineoa-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .lineoa-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-new {
+            background: #10b981;
+            color: #000;
+        }
+
+        .badge-old {
+            background: #f59e0b;
+            color: #000;
+        }
+
+        .lineoa-links {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .link-btn {
+            padding: 6px 12px;
+            background: rgba(168, 85, 247, 0.3);
+            border: 1px solid rgba(168, 85, 247, 0.5);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .link-btn:hover {
+            background: rgba(168, 85, 247, 0.5);
+            border-color: #a855f7;
+        }
+
+        /* Brain Box Section */
+        .brainbox-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+
+        .message-customer {
+            background: rgba(59, 130, 246, 0.2);
+            border-left: 3px solid #3b82f6;
+        }
+
+        .message-ai {
+            background: rgba(168, 85, 247, 0.2);
+            border-left: 3px solid #a855f7;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .text-input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #a855f7;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #ec4899, #a855f7);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .btn-send {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        /* Credit Check Section */
+        .credit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .credit-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+        }
+
+        .credit-card:hover {
+            border-color: #a855f7;
+            transform: translateY(-3px);
+        }
+
+        .credit-website {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .credit-input-box {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-size: 1rem;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .credit-display {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .credit-time {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* Quick Copy Buttons */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .quick-btn {
+            padding: 8px 16px;
+            background: rgba(236, 72, 153, 0.2);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: rgba(236, 72, 153, 0.4);
+            border-color: #ec4899;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.5);
+            border-radius: 4px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🌌 CS WORK AGENT</h1>
+            <p class="subtitle">LINE OA Control Center + Brain Box AI</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="glass-card stat-card">
+                <div class="stat-number" style="color: #fbbf24;">23</div>
+                <div class="stat-label">รอดำเนินการ</div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-number" style="color: #10b981;">147</div>
+                <div class="stat-label">ตอบแล้ววันนี้</div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-number" style="color: #3b82f6;">312</div>
+                <div class="stat-label">รวมทั้งหมด</div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-number" style="color: #ef4444;">5</div>
+                <div class="stat-label">ต้องติดตาม</div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- LINE OA Sidebar -->
+            <div class="lineoa-sidebar">
+                <div class="glass-card">
+                    <div class="section-header">
+                        <span>💬</span>
+                        <span>LINE OA (13 เว็บ)</span>
+                    </div>
+                    <div id="lineoa-list"></div>
+                </div>
+            </div>
+
+            <!-- Brain Box Section -->
+            <div class="brainbox-section">
+                <!-- Chat Display -->
+                <div class="glass-card">
+                    <div class="section-header">
+                        <span>🤖</span>
+                        <span>Brain Box AI Assistant</span>
+                        <span style="margin-left: auto; font-size: 0.9rem; font-weight: 400;" id="selected-website">
+                            เลือกเว็บจาก LINE OA ก่อน
+                        </span>
+                    </div>
+                    
+                    <div class="chat-box" id="chat-box">
+                        <div style="text-align: center; padding: 40px; opacity: 0.7;">
+                            <p style="font-size: 1.2rem; margin-bottom: 10px;">👋 สวัสดีค่ะ!</p>
+                            <p>1️⃣ คลิกเลือกเว็บจาก LINE OA</p>
+                            <p>2️⃣ พิมพ์ข้อความลูกค้า</p>
+                            <p>3️⃣ กด "วิเคราะห์"</p>
+                            <p>4️⃣ Brain Box จะแนะนำคำตอบ</p>
+                            <p>5️⃣ กด "Copy คำตอบ" แล้วส่งใน LINE</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="glass-card">
+                    <div class="quick-actions">
+                        <button class="quick-btn" onclick="quickPaste('คืนยอดเสียยังไงครับ')">🔄 คืนยอดเสีย</button>
+                        <button class="quick-btn" onclick="quickPaste('ฝากเงินยังไง')">💰 ฝากเงิน</button>
+                        <button class="quick-btn" onclick="quickPaste('ถอนเงินไม่ได้')">💸 ถอนเงิน</button>
+                        <button class="quick-btn" onclick="quickPaste('โบนัสมีอะไรบ้าง')">🎁 โบนัส</button>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="text" 
+                            class="text-input" 
+                            id="customer-input" 
+                            placeholder="พิมพ์ข้อความลูกค้าที่นี่..."
+                        >
+                        <button class="btn" onclick="analyzMessage()">🤖 วิเคราะห์</button>
+                    </div>
+
+                    <div class="action-bar">
+                        <button class="btn btn-copy" onclick="copyAIResponse()">📋 Copy คำตอบ</button>
+                        <button class="btn btn-send" onclick="sendToLINE()">📤 ส่งใน LINE</button>
+                        <button class="btn" onclick="clearChat()">🗑️ ล้างแชท</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Credit Check (Old Backend Only) -->
+        <div class="glass-card">
+            <div class="section-header">
+                <span>💰</span>
+                <span>เช็คเครดิต 7 เว็บ (Old Backend เท่านั้น)</span>
+                <span style="margin-left: auto; font-size: 0.9rem; font-weight: 400; color: #fbbf24;">
+                    รอบ 20:00-08:00
+                </span>
+            </div>
+
+            <div class="credit-grid" id="credit-grid"></div>
+
+            <div class="action-bar">
+                <button class="btn" onclick="saveAllCredits()">💾 บันทึกทั้งหมด</button>
+                <button class="btn" onclick="exportReport()">📊 Export รายงาน</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ข้อมูล 13 เว็บ พร้อม LINE OA และ Backend URLs
+        const websites = {
+            // New Backend (6 เว็บ) - ไม่ต้องเช็คเครดิตทุกวัน
+            'LadyPink168': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX', // เปลี่ยนเป็น URL จริง
+                dashboard: 'https://backend-ladypink168.com/admin', // เปลี่ยนเป็น URL จริง
+                wallet: false,
+                color: '#ec4899'
+            },
+            'Osaka999JPN': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-osaka999.com/admin',
+                wallet: true,
+                color: '#f472b6'
+            },
+            'Hokkaido9999': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-hokkaido.com/admin',
+                wallet: true,
+                color: '#fb923c'
+            },
+            'Nuu789': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-nuu789.com/admin',
+                wallet: true,
+                color: '#fbbf24'
+            },
+            'PA00PLU002': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-pa00plu002.com/admin',
+                wallet: true,
+                color: '#a855f7'
+            },
+            'DD168PLAYER': {
+                backend: 'new',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-dd168.com/admin',
+                wallet: true,
+                color: '#3b82f6'
+            },
+
+            // Old Backend (7 เว็บ) - ต้องเช็คเครดิตทุกวัน
+            'boston66': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-boston66.com/admin',
+                wallet: true,
+                color: '#8b5cf6'
+            },
+            'sydney9999': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-sydney9999.com/admin',
+                wallet: true,
+                color: '#ec4899'
+            },
+            'maddix789': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-maddix789.com/admin',
+                wallet: true,
+                color: '#10b981'
+            },
+            'oslo66': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-oslo66.com/admin',
+                wallet: true,
+                color: '#3b82f6'
+            },
+            'zigar66': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-zigar66.com/admin',
+                wallet: true,
+                color: '#6b7280'
+            },
+            'maximum66': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-maximum66.com/admin',
+                wallet: true,
+                color: '#f59e0b'
+            },
+            'mung79': {
+                backend: 'old',
+                lineoa: 'https://manager.line.biz/account/XXXX',
+                dashboard: 'https://backend-mung79.com/admin',
+                wallet: true,
+                color: '#a16207'
+            }
+        };
+
+        // Brain Box Prompts
+        const brainBoxPrompts = {
+            'LadyPink168': {
+                context: 'เว็บ: LadyPink168 | Backend: New | ⚠️ ไม่มี Wallet',
+                cashback: 'กดรับเองได้ 06:00-23:30 น.',
+                note: 'เว็บนี้ไม่มี Wallet - ใช้ธนาคารเท่านั้น'
+            },
+            'Osaka999JPN': {
+                context: 'เว็บ: Osaka999JPN | Backend: New | ✅ มี Wallet',
+                cashback: 'กดรับเองได้ 06:00-23:30 น.',
+                note: 'รองรับทั้ง Wallet และธนาคาร'
+            },
+            'boston66': {
+                context: 'เว็บ: boston66 | Backend: Old | ✅ มี Wallet',
+                cashback: 'กดเอง + แจ้งแอดอนุมัติ (5% max 2,000฿)',
+                note: 'จำกัด 2,000 บาท/วัน'
+            }
+            // ... เพิ่ม prompt ทุกเว็บ
+        };
+
+        let selectedWebsite = null;
+        let lastAIResponse = '';
+
+        // สร้าง LINE OA List
+        function createLINEOAList() {
+            const container = document.getElementById('lineoa-list');
+            Object.entries(websites).forEach(([name, data]) => {
+                const item = document.createElement('div');
+                item.className = 'lineoa-item';
+                item.onclick = () => selectWebsite(name, item);
+                
+                item.innerHTML = `
+                    <div>
+                        <div class="lineoa-name">${name}</div>
+                        <div class="lineoa-links">
+                            <a href="${data.lineoa}" target="_blank" class="link-btn" onclick="event.stopPropagation()">
+                                💬 LINE OA
+                            </a>
+                            <a href="${data.dashboard}" target="_blank" class="link-btn" onclick="event.stopPropagation()">
+                                🌐 Backend
+                            </a>
+                        </div>
+                    </div>
+                    <span class="lineoa-badge badge-${data.backend}">
+                        ${data.backend === 'new' ? 'NEW' : 'OLD'}
+                    </span>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        // เลือกเว็บ
+        function selectWebsite(name, element) {
+            selectedWebsite = name;
+            
+            // Update UI
+            document.querySelectorAll('.lineoa-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            document.getElementById('selected-website').textContent = `🌐 ${name}`;
+            
+            // Clear chat
+            addSystemMessage(`เลือก ${name} แล้วค่ะ พร้อมช่วยวิเคราะห์ข้อความ!`);
+        }
+
+        // Quick Paste
+        function quickPaste(text) {
+            document.getElementById('customer-input').value = text;
+        }
+
+        // Add Message to Chat
+        function addMessage(text, type) {
+            const chatBox = document.getElementById('chat-box');
+            const message = document.createElement('div');
+            message.className = `message message-${type}`;
+            message.innerHTML = text;
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            const chatBox = document.getElementById('chat-box');
+            chatBox.innerHTML = `
+                <div style="text-align: center; padding: 20px; opacity: 0.8;">
+                    <p>${text}</p>
+                </div>
+            `;
+        }
+
+        // Analyze Message
+        function analyzMessage() {
+            const input = document.getElementById('customer-input');
+            const customerMessage = input.value.trim();
+
+            if (!customerMessage) {
+                alert('กรุณาพิมพ์ข้อความลูกค้าก่อนค่ะ');
+                return;
+            }
+
+            if (!selectedWebsite) {
+                alert('กรุณาเลือกเว็บจาก LINE OA ก่อนค่ะ');
+                return;
+            }
+
+            // Clear chat
+            document.getElementById('chat-box').innerHTML = '';
+
+            // Add customer message
+            addMessage(`<strong>👤 ลูกค้า:</strong><br>${customerMessage}`, 'customer');
+
+            // Show loading
+            addMessage('🤖 Brain Box กำลังวิเคราะห์...', 'ai');
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                const websiteData = websites[selectedWebsite];
+                const prompt = brainBoxPrompts[selectedWebsite] || brainBoxPrompts['Osaka999JPN'];
+                
+                // Remove loading
+                document.getElementById('chat-box').lastChild.remove();
+
+                // AI Response
+                const aiResponse = generateAIResponse(customerMessage, selectedWebsite, websiteData, prompt);
+                addMessage(aiResponse, 'ai');
+                lastAIResponse = extractPlainText(aiResponse);
+
+                input.value = '';
+            }, 1500);
+        }
+
+        // Generate AI Response
+        function generateAIResponse(customerMessage, website, data, prompt) {
+            let response = `<strong>🤖 Brain Box วิเคราะห์:</strong><br><br>`;
+            
+            response += `<div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin-bottom: 10px;">`;
+            response += `<strong>🌐 เว็บ:</strong> ${website}<br>`;
+            response += `<strong>📦 Backend:</strong> ${data.backend === 'new' ? 'New (กดเองได้)' : 'Old (ต้องแจ้งแอด)'}<br>`;
+            response += `<strong>💳 Wallet:</strong> ${data.wallet ? '✅ มี' : '❌ ไม่มี'}`;
+            response += `</div>`;
+
+            response += `<strong>📋 ประเภท:</strong> <span style="color: #10b981;">Cashback</span><br>`;
+            response += `<strong>😊 Mood:</strong> <span style="color: #3b82f6;">Friendly</span><br><br>`;
+
+            response += `<strong>💬 คำตอบที่แนะนำ:</strong><br>`;
+            response += `<div style="background: rgba(236, 72, 153, 0.2); padding: 15px; border-radius: 10px; border: 2px solid rgba(236, 72, 153, 0.5); margin-top: 10px;">`;
+            response += `สวัสดีค่ะ 😊<br><br>`;
+            
+            if (data.backend === 'new') {
+                response += `สำหรับเว็บ ${website} คืนยอดเสียสามารถกดรับเองได้เลยนะคะ<br>`;
+                response += `⏰ เวลา: 06:00 - 23:30 น. (ทุกวัน)<br><br>`;
+                response += `💡 วิธีกดรับ:<br>`;
+                response += `1. เข้าเมนู "โปรโมชั่น"<br>`;
+                response += `2. เลือก "คืนยอดเสีย"<br>`;
+                response += `3. กด "รับเลย"<br><br>`;
+                response += `⚠️ หมายเหตุ: ถ้าไม่กดรับภายในเวลาที่กำหนด ยอดจะหมดอายุค่ะ`;
+            } else {
+                response += `สำหรับเว็บ ${website} คืนยอดเสีย 5% (สูงสุด 2,000 บาท)<br><br>`;
+                response += `📌 ขั้นตอน:<br>`;
+                response += `1. คุณลูกค้ากดรับเองก่อนนะคะ<br>`;
+                response += `2. กดรับเสร็จแล้ว แจ้งแอดมาอนุมัติให้ค่ะ<br><br>`;
+                response += `⏱️ ระยะเวลาอนุมัติ: ไม่เกิน 15 นาที`;
+            }
+
+            if (!data.wallet) {
+                response += `<br><br>⚠️ <strong>สำคัญ:</strong> เว็บนี้ไม่มีระบบ Wallet นะคะ ฝาก-ถอนผ่านธนาคารเท่านั้น`;
+            }
+
+            response += `<br><br>มีอะไรสงสัยเพิ่มเติมถามได้เลยนะคะ 💕`;
+            response += `</div>`;
+
+            return response;
+        }
+
+        // Extract Plain Text
+        function extractPlainText(html) {
+            const temp = document.createElement('div');
+            temp.innerHTML = html;
+            return temp.textContent || temp.innerText || '';
+        }
+
+        // Copy AI Response
+        function copyAIResponse() {
+            if (!lastAIResponse) {
+                alert('ยังไม่มีคำตอบจาก Brain Box ค่ะ');
+                return;
+            }
+
+            const lines = lastAIResponse.split('\n');
+            let cleanText = '';
+            let inAnswer = false;
+
+            lines.forEach(line => {
+                if (line.includes('💬 คำตอบที่แนะนำ:')) {
+                    inAnswer = true;
+                    return;
+                }
+                if (inAnswer && line.trim()) {
+                    cleanText += line.trim() + '\n';
+                }
+            });
+
+            navigator.clipboard.writeText(cleanText.trim()).then(() => {
+                alert('✅ Copy คำตอบสำเร็จ! พร้อมส่งใน LINE แล้วค่ะ');
+            });
+        }
+
+        // Send to LINE (จำลอง)
+        function sendToLINE() {
+            if (!lastAIResponse) {
+                alert('ยังไม่มีคำตอบจาก Brain Box ค่ะ');
+                return;
+            }
+
+            if (!selectedWebsite) {
+                alert('กรุณาเลือกเว็บก่อนค่ะ');
+                return;
+            }
+
+            alert(`📤 กำลังเปิด LINE OA ของ ${selectedWebsite}...\n\n` +
+                  'คำตอบถูก Copy แล้ว กด Ctrl+V เพื่อส่งค่ะ');
+
+            // เปิด LINE OA
+            window.open(websites[selectedWebsite].lineoa, '_blank');
+        }
+
+        // Clear Chat
+        function clearChat() {
+            addSystemMessage('เคลียร์แชทแล้วค่ะ พร้อมเริ่มใหม่!');
+            lastAIResponse = '';
+        }
+
+        // Credit Functions (Old Backend Only)
+        function createCreditCards() {
+            const container = document.getElementById('credit-grid');
+            
+            Object.entries(websites).forEach(([name, data]) => {
+                // เช็คเฉพาะ Old Backend
+                if (data.backend !== 'old') return;
+
+                const card = document.createElement('div');
+                card.className = 'credit-card';
+                card.innerHTML = `
+                    <div class="credit-website">${name}</div>
+                    <input type="text" class="credit-input-box" id="credit-${name}" placeholder="กรอก (K/M)">
+                    <div class="credit-display" id="display-${name}">-</div>
+                    <div class="credit-time" id="time-${name}">-</div>
+                `;
+                container.appendChild(card);
+
+                // Event listener
+                const input = document.getElementById(`credit-${name}`);
+                input.addEventListener('blur', () => updateCredit(name));
+            });
+        }
+
+        function parseCredit(value) {
+            const str = value.toUpperCase().trim();
+            if (str.includes('M')) {
+                return parseFloat(str.replace('M', '')) * 1000000;
+            } else if (str.includes('K')) {
+                return parseFloat(str.replace('K', '')) * 1000;
+            }
+            return parseFloat(str) || 0;
+        }
+
+        function updateCredit(website) {
+            const inputEl = document.getElementById(`credit-${website}`);
+            const displayEl = document.getElementById(`display-${website}`);
+            const timeEl = document.getElementById(`time-${website}`);
+
+            const value = inputEl.value;
+            if (!value) return;
+
+            const credit = parseCredit(value);
+            displayEl.textContent = `฿ ${credit.toLocaleString('th-TH', {minimumFractionDigits: 2})}`;
+
+            const now = new Date();
+            timeEl.textContent = `อัพเดท: ${now.toLocaleTimeString('th-TH', {
+                hour: '2-digit',
+                minute: '2-digit'
+            })}`;
+
+            localStorage.setItem(`credit_${website}`, credit);
+            localStorage.setItem(`time_${website}`, now.toISOString());
+        }
+
+        function saveAllCredits() {
+            let saved = 0;
+            Object.entries(websites).forEach(([name, data]) => {
+                if (data.backend !== 'old') return;
+                const inputEl = document.getElementById(`credit-${name}`);
+                if (inputEl.value) {
+                    updateCredit(name);
+                    saved++;
+                }
+            });
+            alert(`✅ บันทึกยอดเครดิต ${saved} เว็บเรียบร้อย!`);
+        }
+
+        function exportReport() {
+            const report = {
+                date: new Date().toLocaleDateString('th-TH'),
+                time: new Date().toLocaleTimeString('th-TH'),
+                credits: {}
+            };
+
+            Object.entries(websites).forEach(([name, data]) => {
+                if (data.backend !== 'old') return;
+                const displayEl = document.getElementById(`display-${name}`);
+                report.credits[name] = displayEl.textContent;
+            });
+
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `credit-report-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Enter key support
+        document.getElementById('customer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzMessage();
+            }
+        });
+
+        // Initialize
+        createLINEOAList();
+        createCreditCards();
+    </script>
+</body>
+</html>
